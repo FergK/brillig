@@ -1,0 +1,40 @@
+<div id="builderBar" class="toImport"></div>
+
+<script>
+
+  /* global UI thePlayer*/
+
+  UI["builderBar"] = {};
+  UI["builderBar"].buttonsMade = false;
+  UI["builderBar"].makeButtons = function( tools ) {
+    
+   if ( UI["builderBar"].buttonsMade ) { return; }
+    
+    for( var i = 1; i < tools.length; i++ ) {
+      
+      var html = `
+      <div id="builderBarButton${ i }" class="builderBarButton">
+        <span class="fa fa-${ tools[i].icon } fa-3x"></span>
+        <div class="keyLabel">${ i }<br>${ tools[i].name }</div>
+      </div>`; // Template strings rock!
+  
+      $( "#builderBar" ).append( html );
+      
+    }
+    
+    UI["builderBar"].buttonsMade = true;
+    
+  };
+  
+  
+  UI["builderBar"].updateButtons = function() {
+    
+    for( var i = 1; i < thePlayer.builder.tools.length; i++ ) {
+      $( "#builderBarButton" + i ).toggleClass( "builderBarButtonPressed", false );
+    }
+    
+    $( "#builderBarButton" + thePlayer.builder.equippedTool ).toggleClass( "builderBarButtonPressed", true );
+    
+  };
+
+</script>

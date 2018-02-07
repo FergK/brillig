@@ -1,0 +1,138 @@
+<div class="ceVe toImport">
+  <div class="ceHo">
+    <div id="optionsBox" class="ceBo box">
+      <div class="boxTitle">Options<span class="fa fa-cogs float-right"></span></div>
+      <ul class="boxList">
+        <div class="boxListHeader">Controls</div>
+        <li>
+          <div class="boxListLabel">Mouse Sensitivity</div>
+          <span class="boxListValue" id="lookSensitivityValue">' + theConfig.mouse.lookSensitivity + '</span>
+          <div id="lookSensitivitySlider"></div>
+          <span>Changes the sensitivity of mouselook</span>
+        </li>
+      </ul>
+      <ul class="boxList">
+        <div class="boxListHeader">Gameplay</div>
+        <li>
+          <div class="boxListLabel">Field of Vision</div>
+          <span class="boxListValue" id="FOVValue">' + theConfig.gameplay.FOV + '</span>
+          <div id="FOVSlider"></div>
+          <span>Changes the maximum viewing angle</span>
+        </li>
+      </ul>
+      <ul class="boxList">
+        <div class="boxListHeader">Video</div>
+        <li class="boxListDetail">
+          &nbsp;&nbsp;<span class="fa fa-exclamation-triangle"></span>&nbsp;&nbsp;Video settings will require a restart to take effect
+        </li>
+        <li>
+          <div class="boxListLabel">Enable Anti-Aliasing</div>
+          <!--<div id="enableAntiAliasing" class="checkbox checked"><span class="fa fa-check"></span></div>-->
+          <div id="enableAntiAliasing" class="checkbox" onclick='UI["optionsBox"].toggleEnableAntiAliasing()'></div>
+          <!--<div id="enableAntiAliasing" class="checkbox" onclick='UI["optionsBox"].toggleEnableAntiAliasing()'><span class="fa fa-times"></span></div>-->
+          <br><span>Improves visual quality by softening hard edges<br>May negatively impact framerate</span>
+        </li>
+        <li>
+          <div class="boxListLabel">Resolution Multiplier</div>
+          <span class="boxListValue" id="resolutionModifierValue">' + theConfig.video.resolutionModifier + '</span>
+          <div id="resolutionModifierSlider"></div>
+          <span>Improves performance by reducing the resolution</span>
+        </li>
+      </ul>
+      <div class="button float-left" onclick="theState.goToPreviousState()"><span class="fa fa-angle-left"></span>&nbsp;&nbsp;Back</div>
+      <div class="button float-right" onclick='UI["optionsBox"].resetToDefaults()'>Reset to Defaults</span>&nbsp;&nbsp;<span class="fa fa-undo"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  /* global UI theConfig theCamera*/
+
+  UI["optionsBox"] = {};
+  UI["optionsBox"].onEnable = function() {
+
+    // Controls ================================================================
+    $( "#lookSensitivitySlider" ).slider({ 
+      value: theConfig.mouse.lookSensitivity,
+      min: 0.01,
+      max: 3,
+      step: 0.01,
+      slide: function( event, ui ) {
+        $( "#lookSensitivityValue" ).html( ui.value );
+        theConfig.mouse.lookSensitivity = ui.value;
+      }
+    });
+
+    $( "#lookSensitivityValue" ).html( theConfig.mouse.lookSensitivity );
+    
+    // Gameplay ================================================================
+    $( "#FOVSlider" ).slider({ 
+      value: theConfig.gameplay.FOV,
+      min: 50,
+      max: 90,
+      step: 5,
+      slide: function( event, ui ) {
+        $( "#FOVValue" ).html( ui.value );
+        theConfig.gameplay.FOV = ui.value;
+        if ( theCamera !== undefined ) {
+          theCamera.camera.fov = theConfig.gameplay.FOV;
+          theCamera.camera.updateProjectionMatrix();
+        }
+      }
+    });
+
+    $( "#FOVValue" ).html( theConfig.gameplay.FOV );
+    
+    // Video ===================================================================
+
+    UI["optionsBox"].updateCheckBox( $( "#enableAntiAliasing" ), theConfig.video.enableAntiAliasing );
+    
+    $( "#resolutionModifierSlider" ).slider({ 
+      value: theConfig.video.resolutionModifier,
+      min: 0.1,
+      max: 1,
+      step: 0.1,
+      slide: function( event, ui ) {
+        $( "#resolutionModifierValue" ).html( ui.value );
+        theConfig.video.resolutionModifier = ui.value;
+      }
+    });
+
+    $( "#resolutionModifierValue" ).html( theConfig.video.resolutionModifier );
+    
+  };
+
+  UI["optionsBox"].toggleEnableAntiAliasing = function ( jquery ) {
+    theConfig.video.enableAntiAliasing = ! theConfig.video.enableAntiAliasing;
+    UI["optionsBox"].updateCheckBox( $( "#enableAntiAliasing" ), theConfig.video.enableAntiAliasing );
+  };
+
+  UI["optionsBox"].updateCheckBox = function ( jquery, value ) {
+    if ( value ) {
+      jquery.toggleClass( "unchecked", false );
+      jquery.toggleClass( "checked", true );
+      jquery.html( '<span class="fa fa-check"></span>' );
+    } else {
+      jquery.toggleClass( "checked", false );
+      jquery.toggleClass( "unchecked", true );
+      jquery.html( '<span class="fa fa-times"></span>' );
+    }
+  };
+  
+  UI["optionsBox"].resetToDefaults = function () {
+    theConfig.resetToDefaults();
+    
+    $( "#lookSensitivitySlider" ).slider( "value", theConfig.mouse.lookSensitivity );
+    $( "#lookSensitivityValue" ).html( theConfig.mouse.lookSensitivity );
+    
+    $( "#FOVSlider" ).slider( "value", theConfig.gameplay.FOV );
+    $( "#FOVValue" ).html( theConfig.gameplay.FOV );
+    
+    UI["optionsBox"].updateCheckBox( $( "#enableAntiAliasing" ), theConfig.video.enableAntiAliasing );
+    
+    $( "#resolutionModifierSlider" ).slider( "value", theConfig.video.resolutionModifier );
+    $( "#resolutionModifierValue" ).html( theConfig.video.resolutionModifier );
+  };
+
+</script>
